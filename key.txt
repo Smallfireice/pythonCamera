@@ -1,0 +1,3 @@
+open camera X
+open camera E
+onCaptureStarted timestamp=
