@@ -1,3 +1,31 @@
-open camera X
-open camera E
-onCaptureStarted timestamp=
+onShutterButtonFocus  pressed = true
+capture E
+capture X
+receive capture request
+waitForAeAfConvergence E
+waitForAeAfConvergence X
+send capture burst request to hal E
+send capture burst request to hal X
+process_capture_request\(\) frame_number 
+process_capture_result\(\) frame_number 
+receive image with timestamp
+rawAlgoStart
+RawAlgoNode from STATUS_RUNNING to STATUS_CAN_DESTROYED
+rawNR : start process
+rawNR :  end shot process
+rawAlgoEnd
+ReprocessNode from STATUS_READY to STATUS_RUNNING
+send dummy request to hal E
+send dummy request to hal X
+process_capture_request\(\) frame_number 0
+process_capture_result\(\) frame_number 0
+Reprocess onCaptureCompleted E
+Reprocess onCaptureCompleted X
+yuvAlgoStart
+jpegEncode : start process
+jpegEncode :  end shot process
+yuvAlgoEnd
+AppVifCallback dataCallback
+notifyToGalleryService
+BusHandOut onReceive msg path
+decode-file

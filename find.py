@@ -58,7 +58,7 @@ def work(filePath='log.txt'):
             if line.find(key)!= -1:
                 time=line.split()
                 time1=time[1].split(':')
-                keyWithTime[key].append(format(float(time1[2]), ".3f"))
+                #keyWithTime[key].append(format(float(time1[2]), ".3f"))
         line=file.readline()
         i=i+1
     file.close() 
