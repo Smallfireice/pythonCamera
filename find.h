@@ -4,20 +4,21 @@
 #include <fstream>
 #include <vector>
 #include <bits/stdc++.h>
+#define debug 0
 
 using namespace std;
 vector<string> keys;
-vector<pair<string, float>> keyTime;
+vector<pair<string, string>> keyTime;
 
 int key_read(string file = "key.txt")
 {
     ifstream inputfile(file);
-
     if(inputfile.is_open())
     {
         string line;
         while (getline(inputfile, line))
         {
+            line.erase(line.find_last_not_of("\r\n")+1);
             keys.push_back(line);
         }
         
@@ -26,7 +27,17 @@ int key_read(string file = "key.txt")
         return -1;
     }
     inputfile.close();
+    for(auto c : keys)
+    {
+#if debug
+        cout << c << endl;
+#endif
+    }
     return 0;
+}
+bool sortfunc(const pair<string, string> &a, const pair<string, string> &b)
+{
+    return stod(a.second) < stod(b.second);
 }
 
 string spilt_char(string line,char keysplit)
@@ -34,6 +45,7 @@ string spilt_char(string line,char keysplit)
     int splitNumeber;
     istringstream iss(line);
     string buf;
+
     if(keysplit == ' ')
     {
         splitNumeber = 2;
@@ -44,8 +56,23 @@ string spilt_char(string line,char keysplit)
     while(splitNumeber--)
     {
         getline(iss, buf, keysplit);
+        if(buf == "ALGO")
+        {
+            splitNumeber++;
+        }
     }
     return buf;
+}
+
+string substr(string &buf, char a, int number)
+{
+    string result = buf;
+    size_t pos = result.find(a);
+    
+    if (pos != std::string::npos) {
+        result = result.substr(0, pos + number+1);
+    }
+    return result;
 }
 
 void coutResult()
@@ -72,13 +99,17 @@ int savefile()
 {
     std::ofstream file("result.txt"); 
 
-    if (file.is_open()) { 
-        for (auto c : keyTime) {
-            file << c.first  << c.second << std::endl; 
+    if (file.is_open()) 
+    { 
+        for (auto c : keyTime)
+        {
+            file << c.first <<endl;
+            file << c.second << endl; 
         }
 
-        file.close(); // 关闭文件
-    } else {
+        file.close(); 
+    } else 
+    {
         std::cout << "Failed to open the file." << std::endl;
         return -1;
     }
@@ -102,15 +133,23 @@ int find_work(string file = "log.txt")
                 {
                     buf = spilt_char(line, ' ');
                     buf = spilt_char(buf, ':');
-                    float number = stof(buf);
-                    pair<string, float> temp;
+                    pair<string, string> temp;
                     temp.first = c;
 
-                    ostringstream oss;
-                    oss << fixed << setprecision(3) << number;
-                    number = stof(oss.str());
-                    temp.second = number;
+                    // ostringstream oss;
+                    // oss << fixed << setprecision(3) << number;
+                    // number = stof(oss.str());
+
+                    temp.second = substr(buf,'.',3);
                     keyTime.push_back(temp);
+#if debug
+                    cout << "find" << endl;
+#endif
+                }else
+                {
+#if debug
+                    cout << "no find" << endl;
+#endif
                 }
             }
         }
@@ -119,6 +158,7 @@ int find_work(string file = "log.txt")
     {
         return -1;
     }
+    sort(keyTime.begin(), keyTime.end(), sortfunc);
     coutResult();
     if(-1 == savefile())
     {
